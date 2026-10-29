@@ -1,0 +1,16 @@
+# Keep the build context small and free of data/secrets.
+.git
+.github
+.venv
+**/__pycache__
+**/.pytest_cache
+.env
+.env.*
+!.env.example
+data
+tos_radar_dataset
+frontend
+docs
+evaluation
+backend/tests
+*.md

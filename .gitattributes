@@ -1,0 +1,5 @@
+# Original dataset: store byte-for-byte (no CRLF/LF conversion). policy_changes.csv and policy_versions.csv
+# use CRLF row endings, and core.autocrlf would otherwise rewrite them. Checksums: scripts/dataset.sha256
+tos_radar_dataset/* -text
+# >100 MB: stored in Git LFS (the only LFS-tracked file).
+tos_radar_dataset/policy_versions.csv filter=lfs diff=lfs merge=lfs -text

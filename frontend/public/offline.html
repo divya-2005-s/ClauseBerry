@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf9fc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#13111f" media="(prefers-color-scheme: dark)">
+  <title>Offline · ClauseBerry</title>
+  <!-- Static page shown by the service worker when a page can't load. Contains no user data. -->
+  <style>
+    :root { --bg: #faf9fc; --fg: #202038; --muted: #5f5e78; --card: #ffffff; --border: #e6e2ef; --berry: #7656e8; --on-berry: #ffffff; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #13111f; --fg: #ecebf7; --muted: #a6a3c2; --card: #1b1830; --border: #2d2948; --berry: #9a82ff; --on-berry: #14102a; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px 16px;
+           background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { width: 100%; max-width: 380px; text-align: center; background: var(--card); border: 1px solid var(--border);
+           border-radius: 20px; padding: 32px 24px; box-shadow: 0 12px 32px -12px rgb(76 56 168 / .25); }
+    img { width: 72px; height: 72px; border-radius: 18px; }
+    h1 { margin: 20px 0 8px; font-size: 1.35rem; letter-spacing: -.01em; }
+    p { margin: 0; color: var(--muted); font-size: .95rem; }
+    button { margin-top: 24px; height: 44px; padding: 0 22px; border: 0; border-radius: 12px; cursor: pointer;
+             background: var(--berry); color: var(--on-berry); font: inherit; font-weight: 600; }
+    button:focus-visible { outline: 2px solid var(--berry); outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/icons/icon-192.png" alt="" width="72" height="72">
+    <h1>You're offline</h1>
+    <p>ClauseBerry needs a connection to load policy data. Your account and data are only ever fetched live, never stored on this device.</p>
+    <button type="button" onclick="location.reload()">Try again</button>
+  </main>
+</body>
+</html>

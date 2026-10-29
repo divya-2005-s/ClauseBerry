@@ -1,0 +1,95 @@
+name: Daily policy pipeline
+
+# Public-data pipeline: fetch policies, detect and analyse changes, refresh the vector index.
+# It never holds user data: the state it restores and uploads is sanitised by scripts/export_public_state.py,
+# and email is disabled here. User alerts are produced by running the pipeline on the backend host,
+# next to its persistent volume (see docs/deployment.md).
+
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 03:17 UTC daily
+  workflow_dispatch:
+    inputs:
+      skip_fetch:
+        description: "Skip fetching (re-process only)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: daily-pipeline
+  cancel-in-progress: false   # never run two pipelines at once
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+      FETCH_USER_AGENT: ${{ vars.FETCH_USER_AGENT }}
+      APP_ENV: production
+    steps:
+      - uses: actions/checkout@v4
+      # policy_versions.csv is in Git LFS. Cache LFS objects so daily runs don't re-download ~170 MB
+      # (LFS bandwidth counts against the repository owner's monthly quota).
+      - name: List LFS objects
+        run: git lfs ls-files --long | cut -d ' ' -f1 | sort > .lfs-assets-id
+      - name: Restore LFS cache
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-assets-id') }}
+      - name: Pull LFS files
+        run: git lfs pull
+      - name: Verify dataset integrity
+        run: python3 scripts/verify_dataset.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - name: Install dependencies
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r backend/requirements.txt
+      - name: Cache embedding model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-${{ hashFiles('backend/requirements.txt') }}
+      - name: Restore previous public state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data
+          run_id=$(gh run list --workflow daily-pipeline.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId' || true)
+          if [ -n "$run_id" ] && gh run download "$run_id" --name pipeline-state --dir /tmp/state; then
+            tar -xzf /tmp/state/state.tar.gz -C data
+          else
+            echo "No previous state; building from the dataset (first run takes longer)."
+          fi
+      - name: Run pipeline (no email)
+        run: python -m pipeline.run_pipeline --no-email --llm-limit ${{ vars.LLM_DAILY_LIMIT || '0' }} ${{ inputs.skip_fetch && '--skip-fetch' || '' }}
+      - name: Sanitise and package state
+        run: |
+          python scripts/export_public_state.py data/clauseberry.db /tmp/clauseberry.db
+          mkdir -p /tmp/pkg && cp /tmp/clauseberry.db /tmp/pkg/ && cp -r data/chroma /tmp/pkg/chroma
+          tar -czf /tmp/state.tar.gz -C /tmp/pkg clauseberry.db chroma
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-state
+          path: /tmp/state.tar.gz
+          retention-days: 14
+      - name: Summary
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import sqlite3, json
+          c = sqlite3.connect("data/clauseberry.db")
+          print("| step | status | stats |\n|---|---|---|")
+          for step, status, stats in c.execute("SELECT step, status, stats FROM pipeline_runs WHERE id IN (SELECT MAX(id) FROM pipeline_runs GROUP BY step)"):
+              print(f"| {step} | {status} | `{stats[:180]}` |")
+          PY

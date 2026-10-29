@@ -1,0 +1,33 @@
+name: Server pipeline (production)
+
+# Runs the daily pipeline INSIDE the deployed API machine, next to its /data volume, so new policy changes reach
+# the production database and real users get alerts. Inert until you set the repository variable FLY_APP and
+# the secret FLY_API_TOKEN (a deploy token scoped to that app).
+#
+# Gemini usage is capped by the repository variable LLM_DAILY_LIMIT (default 0 = rule-based only).
+
+on:
+  schedule:
+    - cron: "41 4 * * *"   # 04:41 UTC daily
+  workflow_dispatch:
+
+concurrency:
+  group: server-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    if: ${{ vars.FLY_APP != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Run pipeline on the API machine
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: >
+          flyctl ssh console --app "${{ vars.FLY_APP }}" --command
+          "python -m pipeline.run_pipeline --skip-load --llm-limit ${{ vars.LLM_DAILY_LIMIT || '0' }}"

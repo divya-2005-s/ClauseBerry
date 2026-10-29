@@ -1,0 +1,247 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-inter);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  /* ClauseBerry brand */
+  --color-berry: var(--berry);
+  --color-berry-soft: var(--berry-soft);
+  --color-lavender: var(--lavender);
+  --color-coral: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+  --color-surface-2: var(--surface-2);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --shadow-soft: 0 1px 2px rgb(32 32 56 / 0.04), 0 4px 16px -4px rgb(32 32 56 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(32 32 56 / 0.05), 0 12px 32px -8px rgb(76 56 168 / 0.18);
+}
+
+/* ---------------------------------------------------------------- light */
+:root {
+  --background: #faf9fc;
+  --foreground: #202038;
+  --card: #ffffff;
+  --card-foreground: #202038;
+  --popover: #ffffff;
+  --popover-foreground: #202038;
+  --primary: #7656e8;
+  --primary-foreground: #ffffff;
+  --secondary: #eee8ff;
+  --secondary-foreground: #3d2a99;
+  --muted: #f2f0f7;
+  --muted-foreground: #5f5e78;
+  --accent: #f1ecff;
+  --accent-foreground: #3d2a99;
+  --destructive: #c8372f;
+  --border: #e6e2ef;
+  --input: #dcd7e8;
+  --ring: #7656e8;
+  --radius: 0.75rem;
+
+  --berry: #7656e8;
+  --berry-soft: #eee8ff;
+  --lavender: #f6f2ff;
+  --coral: #e0703f;
+  --coral-soft: #fdeee6;
+  --success: #1f8a4c;
+  --warning: #b7791f;
+  --critical: #c8372f;
+  --surface-2: #f5f3fa;
+
+  /* Charts — validated with the dataviz palette validator (light surface #ffffff) */
+  --chart-1: #7656e8;   /* categorical 1: berry */
+  --chart-2: #e0703f;   /* categorical 2: coral */
+  --chart-3: #1a9e8f;   /* categorical 3: teal  */
+  --chart-4: #8f8ca6;   /* neutral "other" */
+  --chart-5: #3d2a99;
+  --risk-1: #eda07c;    /* ordinal risk ramp, one hue, light → dark */
+  --risk-2: #e27b52;
+  --risk-3: #cc5a32;
+  --risk-4: #a6411f;
+  --risk-5: #782b12;
+  --heat-0: #f4f1fb;
+  --heat-1: #ddd3fb;
+  --heat-2: #b9a6f5;
+  --heat-3: #8f74ee;
+  --heat-4: #6346d8;
+  --heat-5: #3d2a99;
+  --grid: #ebe8f2;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #202038;
+  --sidebar-primary: #7656e8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1ecff;
+  --sidebar-accent-foreground: #3d2a99;
+  --sidebar-border: #ece9f3;
+  --sidebar-ring: #7656e8;
+}
+
+/* ---------------------------------------------------------------- dark */
+.dark {
+  --background: #13111f;
+  --foreground: #ecebf7;
+  --card: #1b1830;
+  --card-foreground: #ecebf7;
+  --popover: #1f1c36;
+  --popover-foreground: #ecebf7;
+  --primary: #9a82ff;
+  --primary-foreground: #14102a;
+  --secondary: #2a2450;
+  --secondary-foreground: #ddd4ff;
+  --muted: #221f3a;
+  --muted-foreground: #a6a3c2;
+  --accent: #2a2450;
+  --accent-foreground: #ddd4ff;
+  --destructive: #ef6b62;
+  --border: #2d2948;
+  --input: #3a3560;
+  --ring: #9a82ff;
+
+  --berry: #9a82ff;
+  --berry-soft: #2a2450;
+  --lavender: #1e1a35;
+  --coral: #ef8a5c;
+  --coral-soft: #3a2420;
+  --success: #4cc27f;
+  --warning: #e7b04f;
+  --critical: #ef6b62;
+  --surface-2: #181529;
+
+  /* Validated separately against the dark chart surface #1b1830 */
+  --chart-1: #8a6ff0;
+  --chart-2: #d9652f;
+  --chart-3: #1f998a;
+  --chart-4: #6f6c8c;
+  --chart-5: #c1b2ff;
+  --risk-1: #9a4524;    /* on dark, higher risk = brighter */
+  --risk-2: #b9532d;
+  --risk-3: #d4693d;
+  --risk-4: #e88a5f;
+  --risk-5: #f3ad8b;
+  --heat-0: #1f1c36;
+  --heat-1: #2f2860;
+  --heat-2: #463a8c;
+  --heat-3: #6550c2;
+  --heat-4: #8a72ef;
+  --heat-5: #b9a8ff;
+  --grid: #2a2645;
+
+  --sidebar: #17142a;
+  --sidebar-foreground: #ecebf7;
+  --sidebar-primary: #9a82ff;
+  --sidebar-primary-foreground: #14102a;
+  --sidebar-accent: #2a2450;
+  --sidebar-accent-foreground: #ddd4ff;
+  --sidebar-border: #2a2645;
+  --sidebar-ring: #9a82ff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv11", "ss01";
+  }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .bg-berry-glow {
+    background:
+      radial-gradient(60% 50% at 15% 0%, color-mix(in oklab, var(--berry) 16%, transparent), transparent 70%),
+      radial-gradient(40% 40% at 95% 10%, color-mix(in oklab, var(--coral) 12%, transparent), transparent 70%);
+  }
+  .bg-dot-grid {
+    background-image: radial-gradient(color-mix(in oklab, var(--berry) 18%, transparent) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+  .card-soft {
+    @apply rounded-xl border bg-card;
+    box-shadow: var(--shadow-soft);
+  }
+  .diff-ins {
+    background: color-mix(in oklab, var(--success) 18%, transparent);
+    color: inherit;
+    text-decoration: none;
+    border-radius: 3px;
+    padding: 0 1px;
+  }
+  .diff-del {
+    background: color-mix(in oklab, var(--critical) 16%, transparent);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in oklab, var(--critical) 60%, transparent);
+    border-radius: 3px;
+    padding: 0 1px;
+  }
+  .prose-chat p { @apply my-2 leading-relaxed; }
+  .prose-chat ul { @apply my-2 list-disc space-y-1.5 pl-5; }
+  .prose-chat ol { @apply my-2 list-decimal space-y-1.5 pl-5; }
+  .prose-chat strong { @apply font-semibold; }
+  .prose-chat em { @apply text-muted-foreground; }
+  .prose-chat code { @apply rounded bg-muted px-1 py-0.5 text-[0.85em]; }
+  .prose-chat a { @apply text-primary underline underline-offset-2; }
+}
